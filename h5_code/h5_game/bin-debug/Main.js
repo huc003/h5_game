@@ -74,7 +74,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var Main = (function (_super) {
     __extends(Main, _super);
     function Main() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.radius = 30;
+        _this.during = 40;
+        return _this;
     }
     Main.prototype.createChildren = function () {
         _super.prototype.createChildren.call(this);
@@ -98,24 +101,12 @@ var Main = (function (_super) {
     };
     Main.prototype.runGame = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var result, userInfo;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.loadResource()];
                     case 1:
                         _a.sent();
                         this.createGameScene();
-                        return [4 /*yield*/, RES.getResAsync("description_json")];
-                    case 2:
-                        result = _a.sent();
-                        this.startAnimation(result);
-                        return [4 /*yield*/, platform.login()];
-                    case 3:
-                        _a.sent();
-                        return [4 /*yield*/, platform.getUserInfo()];
-                    case 4:
-                        userInfo = _a.sent();
-                        console.log(userInfo);
                         return [2 /*return*/];
                 }
             });
@@ -166,55 +157,72 @@ var Main = (function (_super) {
      * Create scene interface
      */
     Main.prototype.createGameScene = function () {
-        var sky = this.createBitmapByName("bg_jpg");
-        this.addChild(sky);
-        var stageW = this.stage.stageWidth;
-        var stageH = this.stage.stageHeight;
-        sky.width = stageW;
-        sky.height = stageH;
-        var topMask = new egret.Shape();
-        topMask.graphics.beginFill(0x000000, 0.5);
-        topMask.graphics.drawRect(0, 0, stageW, 172);
-        topMask.graphics.endFill();
-        topMask.y = 33;
-        this.addChild(topMask);
-        var icon = this.createBitmapByName("egret_icon_png");
-        this.addChild(icon);
-        icon.x = 26;
-        icon.y = 33;
-        var line = new egret.Shape();
-        line.graphics.lineStyle(2, 0xffffff);
-        line.graphics.moveTo(0, 0);
-        line.graphics.lineTo(0, 117);
-        line.graphics.endFill();
-        line.x = 172;
-        line.y = 61;
-        this.addChild(line);
-        var colorLabel = new egret.TextField();
-        colorLabel.textColor = 0xffffff;
-        colorLabel.width = stageW - 172;
-        colorLabel.textAlign = "center";
-        colorLabel.text = "Hello Egret";
-        colorLabel.size = 24;
-        colorLabel.x = 172;
-        colorLabel.y = 80;
-        this.addChild(colorLabel);
-        var textfield = new egret.TextField();
-        this.addChild(textfield);
-        textfield.alpha = 0;
-        textfield.width = stageW - 172;
-        textfield.textAlign = egret.HorizontalAlign.CENTER;
-        textfield.size = 24;
-        textfield.textColor = 0xffffff;
-        textfield.x = 172;
-        textfield.y = 135;
-        this.textfield = textfield;
-        var button = new eui.Button();
-        button.label = "Click!";
-        button.horizontalCenter = 0;
-        button.verticalCenter = 0;
-        this.addChild(button);
-        button.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onButtonClick, this);
+        this.tools = new Tools();
+        var bg = this.tools.createBitmapByName("bg2_jpg");
+        this.addChild(bg);
+        bg.width = this.stage.stageWidth;
+        bg.height = this.stage.stageHeight;
+        var startSprite = new egret.Sprite();
+        var start = this.tools.createBitmapByName("start_png");
+        start.width = 400;
+        start.height = 150;
+        startSprite.name = 'start_sprite';
+        // button.label='开始游戏';
+        startSprite.addChild(start);
+        startSprite.touchEnabled = true;
+        startSprite.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onButtonClick, this);
+        this.addChild(startSprite);
+        // console.log('this.stage.width --> '+this.stage.width);
+        // console.log('this.stage.height --> '+this.stage.height);
+        // console.log('button.width --> '+button.width);
+        // console.log('button.height --> '+button.height);
+        // console.log('start.width --> '+start.width);
+        // console.log('start.height --> '+start.height);
+        //按钮容器位置
+        startSprite.x = (this.stage.width - startSprite.width) / 2;
+        startSprite.y = (this.stage.height - startSprite.height) / 2 + 200;
+        // console.log('startShape.x --> '+startShape.x);
+        // console.log('startShape.y --> '+startShape.y);
+        // //开始游戏事件
+        // startShape.touchEnabled = true;
+        // startShape.addEventListener(egret.TouchEvent.TOUCH_TAP,this.onClickStart,this);
+        // let topMask = new egret.Shape();
+        // topMask.graphics.beginFill(0x000000, 0.5);
+        // topMask.graphics.drawRect(0, 0, stageW, 172);
+        // topMask.graphics.endFill();
+        // topMask.y = 33;
+        // this.addChild(topMask);
+        // let icon: egret.Bitmap = this.createBitmapByName("egret_icon_png");
+        // this.addChild(icon);
+        // icon.x = 26;
+        // icon.y = 33;
+        // let line = new egret.Shape();
+        // line.graphics.lineStyle(2, 0xffffff);
+        // line.graphics.moveTo(0, 0);
+        // line.graphics.lineTo(0, 117);
+        // line.graphics.endFill();
+        // line.x = 172;
+        // line.y = 61;
+        // this.addChild(line);
+        // let colorLabel = new egret.TextField();
+        // colorLabel.textColor = 0xffffff;
+        // colorLabel.width = stageW - 172;
+        // colorLabel.textAlign = "center";
+        // colorLabel.text = "Hello Egret";
+        // colorLabel.size = 24;
+        // colorLabel.x = 172;
+        // colorLabel.y = 80;
+        // this.addChild(colorLabel);
+        // let textfield = new egret.TextField();
+        // this.addChild(textfield);
+        // textfield.alpha = 0;
+        // textfield.width = stageW - 172;
+        // textfield.textAlign = egret.HorizontalAlign.CENTER;
+        // textfield.size = 24;
+        // textfield.textColor = 0xffffff;
+        // textfield.x = 172;
+        // textfield.y = 135;
+        // this.textfield = textfield;
     };
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
@@ -254,12 +262,85 @@ var Main = (function (_super) {
         change();
     };
     /**
-     * 点击按钮
+     * 进入游戏页面
      * Click the button
      */
     Main.prototype.onButtonClick = function (e) {
+        //初始化游戏界面容器
+        var gameMain = new GameMain();
+        //将容器添加到文档类
+        this.addChild(gameMain);
+        //初始化游戏页面数据
+        gameMain.init();
+    };
+    /**
+     * 随机产生食物
+     */
+    Main.prototype.randomFood = function () {
+        //随机坐标
+        var tmpx = Math.random() * (this.stageW - this.radius * 2);
+        var tmpy = Math.random() * (this.stageH - this.radius * 2);
+        //新建食物对象
+        this.food = new Food(tmpx, tmpy, this.radius);
+        //显示食物
+        this.addChild(this.food);
+    };
+    /**
+     * 根据点击事件调用彩虹蛇的移动方法
+     */
+    Main.prototype.move = function (e) {
+        this.snake.move(e, this.during);
+    };
+    Main.prototype.onEat = function () {
+        this.removeChild(this.food);
+        this.snake.afterEat(this.food.color);
+        this.randomFood();
+    };
+    /**
+     * 点击结束
+     */
+    Main.prototype.moveEnd = function (e) {
+        //关闭定时器
+        if (this.timer != null) {
+            this.timer.stop();
+            this.timer = null;
+        }
+    };
+    /**
+     * 当点击拖动时
+     */
+    Main.prototype.onMove = function (e) {
+        //保存event
+        this.moveEvent = e;
+        //开启一个计时器
+        if (this.timer == null) {
+            this.timer = new egret.Timer(this.during);
+            this.timer.addEventListener(egret.TimerEvent.TIMER, this.onTimer, this);
+            this.timer.start();
+        }
+    };
+    Main.prototype.onTimer = function (e) {
+        //获取蛇头
+        this.head = this.snake.getHead();
+        //调用方法，检测蛇头和食物是否发生碰撞
+        if (this.hit(this.head, this.food)) {
+            //发生碰撞，则调用食物被吃时间
+            this.onEat();
+        }
+        //彩蛇继续移动
+        this.snake.move(this.moveEvent, this.during);
+    };
+    Main.prototype.hit = function (a, b) {
+        return (new egret.Rectangle(a.x + this.snake.x, a.y + this.snake.y, a.width, a.height))
+            .intersects(new egret.Rectangle(b.x, b.y, b.width, b.height));
+    };
+    /**
+     * 点击开始游戏按钮
+     */
+    Main.prototype.onClickStart = function (e) {
+        console.log('游戏开始了');
         var panel = new eui.Panel();
-        panel.title = "Title";
+        panel.title = "游戏开始了";
         panel.horizontalCenter = 0;
         panel.verticalCenter = 0;
         this.addChild(panel);

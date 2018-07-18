@@ -29,6 +29,8 @@
 
 class Main extends eui.UILayer {
 
+    private tools:Tools;
+
 
     protected createChildren(): void {
         super.createChildren();
@@ -57,15 +59,52 @@ class Main extends eui.UILayer {
         })
     }
 
+    private food:Food;
+    private snake:Snake;
+    private stageW:number;
+    private stageH:number;
+    private radius = 30;
+
+    //定时器
+    private timer:egret.Timer;
+    private during:number = 40;
+    private moveEvent:egret.TouchEvent;
+    private head:egret.Shape;
+
     private async runGame() {
         await this.loadResource()
         this.createGameScene();
-        const result = await RES.getResAsync("description_json")
-        this.startAnimation(result);
-        await platform.login();
-        const userInfo = await platform.getUserInfo();
-        console.log(userInfo);
+        // const result = await RES.getResAsync("description_json")
+        // this.startAnimation(result);
+        // await platform.login();
+        // const userInfo = await platform.getUserInfo();
+        // console.log(userInfo);
+        // var food = new Food(25,25,25);
+        // this.addChild(food);
+        //获取舞台的高宽
+        // this.stageW = this.stage.stageWidth;
+        // this.stageH = this.stage.stageHeight;
 
+        // //白色背景填满整个屏幕
+        // var bg = new egret.Shape();
+        // bg.graphics.beginFill(0xffffff);
+        // bg.graphics.drawRect(0,0,this.stageW,this.stageH);
+        // bg.graphics.endFill();
+
+        // this.addChild(bg);
+
+        // //调用方法生产随机食物
+        // this.randomFood();
+
+        // //生成彩色的蛇
+        // this.snake = new Snake(this.stageW*0.5,this.stageH*0.5,this.radius,0x000000);
+        // this.addChild(this.snake);
+
+        // //开始舞台的点击，并注册指定的触摸事件
+        // this.touchEnabled = true;
+        // this.addEventListener(egret.TouchEvent.TOUCH_TAP,this.move,this);
+        // this.addEventListener(egret.TouchEvent.TOUCH_MOVE,this.onMove,this);
+        // this.addEventListener(egret.TouchEvent.TOUCH_END,this.moveEnd,this);
     }
 
     private async loadResource() {
@@ -100,62 +139,84 @@ class Main extends eui.UILayer {
      * Create scene interface
      */
     protected createGameScene(): void {
-        let sky = this.createBitmapByName("bg_jpg");
-        this.addChild(sky);
-        let stageW = this.stage.stageWidth;
-        let stageH = this.stage.stageHeight;
-        sky.width = stageW;
-        sky.height = stageH;
 
-        let topMask = new egret.Shape();
-        topMask.graphics.beginFill(0x000000, 0.5);
-        topMask.graphics.drawRect(0, 0, stageW, 172);
-        topMask.graphics.endFill();
-        topMask.y = 33;
-        this.addChild(topMask);
+        this.tools = new Tools();
+        let bg = this.tools.createBitmapByName("bg2_jpg");
+        this.addChild(bg);
 
-        let icon: egret.Bitmap = this.createBitmapByName("egret_icon_png");
-        this.addChild(icon);
-        icon.x = 26;
-        icon.y = 33;
+        bg.width = this.stage.stageWidth;
+        bg.height = this.stage.stageHeight;
 
-        let line = new egret.Shape();
-        line.graphics.lineStyle(2, 0xffffff);
-        line.graphics.moveTo(0, 0);
-        line.graphics.lineTo(0, 117);
-        line.graphics.endFill();
-        line.x = 172;
-        line.y = 61;
-        this.addChild(line);
+        var startSprite:egret.Sprite = new egret.Sprite();
+        var start = this.tools.createBitmapByName("start_png");
+        start.width=400;
+        start.height=150;
+        startSprite.name='start_sprite';
+        // button.label='开始游戏';
+        startSprite.addChild(start);
+        startSprite.touchEnabled = true;
+        startSprite.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onButtonClick, this);
+
+        this.addChild(startSprite);
+        // console.log('this.stage.width --> '+this.stage.width);
+        // console.log('this.stage.height --> '+this.stage.height);
+        // console.log('button.width --> '+button.width);
+        // console.log('button.height --> '+button.height);
+        // console.log('start.width --> '+start.width);
+        // console.log('start.height --> '+start.height);
+        //按钮容器位置
+        startSprite.x = (this.stage.width-startSprite.width)/2;
+        startSprite.y = (this.stage.height-startSprite.height)/2+200;
+        // console.log('startShape.x --> '+startShape.x);
+        // console.log('startShape.y --> '+startShape.y);
+        // //开始游戏事件
+        // startShape.touchEnabled = true;
+        // startShape.addEventListener(egret.TouchEvent.TOUCH_TAP,this.onClickStart,this);
+
+        // let topMask = new egret.Shape();
+        // topMask.graphics.beginFill(0x000000, 0.5);
+        // topMask.graphics.drawRect(0, 0, stageW, 172);
+        // topMask.graphics.endFill();
+        // topMask.y = 33;
+        // this.addChild(topMask);
+
+        // let icon: egret.Bitmap = this.createBitmapByName("egret_icon_png");
+        // this.addChild(icon);
+        // icon.x = 26;
+        // icon.y = 33;
+
+        // let line = new egret.Shape();
+        // line.graphics.lineStyle(2, 0xffffff);
+        // line.graphics.moveTo(0, 0);
+        // line.graphics.lineTo(0, 117);
+        // line.graphics.endFill();
+        // line.x = 172;
+        // line.y = 61;
+        // this.addChild(line);
 
 
-        let colorLabel = new egret.TextField();
-        colorLabel.textColor = 0xffffff;
-        colorLabel.width = stageW - 172;
-        colorLabel.textAlign = "center";
-        colorLabel.text = "Hello Egret";
-        colorLabel.size = 24;
-        colorLabel.x = 172;
-        colorLabel.y = 80;
-        this.addChild(colorLabel);
+        // let colorLabel = new egret.TextField();
+        // colorLabel.textColor = 0xffffff;
+        // colorLabel.width = stageW - 172;
+        // colorLabel.textAlign = "center";
+        // colorLabel.text = "Hello Egret";
+        // colorLabel.size = 24;
+        // colorLabel.x = 172;
+        // colorLabel.y = 80;
+        // this.addChild(colorLabel);
 
-        let textfield = new egret.TextField();
-        this.addChild(textfield);
-        textfield.alpha = 0;
-        textfield.width = stageW - 172;
-        textfield.textAlign = egret.HorizontalAlign.CENTER;
-        textfield.size = 24;
-        textfield.textColor = 0xffffff;
-        textfield.x = 172;
-        textfield.y = 135;
-        this.textfield = textfield;
+        // let textfield = new egret.TextField();
+        // this.addChild(textfield);
+        // textfield.alpha = 0;
+        // textfield.width = stageW - 172;
+        // textfield.textAlign = egret.HorizontalAlign.CENTER;
+        // textfield.size = 24;
+        // textfield.textColor = 0xffffff;
+        // textfield.x = 172;
+        // textfield.y = 135;
+        // this.textfield = textfield;
 
-        let button = new eui.Button();
-        button.label = "Click!";
-        button.horizontalCenter = 0;
-        button.verticalCenter = 0;
-        this.addChild(button);
-        button.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onButtonClick, this);
+        
     }
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
@@ -198,14 +259,98 @@ class Main extends eui.UILayer {
     }
 
     /**
-     * 点击按钮
+     * 进入游戏页面
      * Click the button
      */
     private onButtonClick(e: egret.TouchEvent) {
+        //初始化游戏界面容器
+        var gameMain = new GameMain();
+        //将容器添加到文档类
+        this.addChild(gameMain);
+        //初始化游戏页面数据
+        gameMain.init();
+    }
+
+    /**
+     * 随机产生食物
+     */
+    public randomFood():void{
+        //随机坐标
+        var tmpx = Math.random()*(this.stageW - this.radius*2);
+        var tmpy = Math.random()*(this.stageH - this.radius*2);
+        //新建食物对象
+        this.food = new Food(tmpx,tmpy,this.radius);
+        //显示食物
+        this.addChild(this.food);
+    }
+
+    /**
+     * 根据点击事件调用彩虹蛇的移动方法
+     */
+    private move(e:egret.TouchEvent):void{
+        this.snake.move(e,this.during);
+    }
+
+    private onEat() {
+        this.removeChild(this.food);
+        this.snake.afterEat(this.food.color);
+        this.randomFood();
+    }
+
+
+    /**
+     * 点击结束
+     */
+    private moveEnd(e:egret.TouchEvent){
+        //关闭定时器
+        if(this.timer!=null){
+            this.timer.stop();
+            this.timer = null;
+        }
+    }
+
+    /**
+     * 当点击拖动时
+     */
+    private onMove(e:egret.TouchEvent):void{
+        //保存event
+        this.moveEvent = e;
+        //开启一个计时器
+        if(this.timer == null){
+            this.timer = new egret.Timer(this.during);
+            this.timer.addEventListener(egret.TimerEvent.TIMER,this.onTimer,this);
+            this.timer.start();
+        }
+    }
+
+    private onTimer(e:egret.TimerEvent){
+        //获取蛇头
+        this.head = this.snake.getHead();
+        //调用方法，检测蛇头和食物是否发生碰撞
+        if(this.hit(this.head,this.food)){
+            //发生碰撞，则调用食物被吃时间
+            this.onEat();
+        }
+        //彩蛇继续移动
+        this.snake.move(this.moveEvent,this.during);
+    }
+
+    private hit(a,b){
+        return (new egret.Rectangle(a.x + this.snake.x, a.y + this.snake.y, a.width, a.height))
+           .intersects(new egret.Rectangle(b.x, b.y, b.width, b.height));
+    }
+
+    /**
+     * 点击开始游戏按钮
+     */
+    private onClickStart(e: egret.TouchEvent){
+        console.log('游戏开始了');
+        
         let panel = new eui.Panel();
-        panel.title = "Title";
+        panel.title = "游戏开始了";
         panel.horizontalCenter = 0;
         panel.verticalCenter = 0;
         this.addChild(panel);
     }
+
 }
