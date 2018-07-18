@@ -25,6 +25,12 @@ class GameMain extends egret.Sprite{
         back.x = (this.stage.width-back.width)/2;
         back.y = (this.stage.height-back.height)/2-200;
         back.addEventListener(egret.TouchEvent.TOUCH_TAP,this.gameOver,this);
+
+        //棍子变长
+        
+
+
+        //柱子
 	}
 
 	/**
