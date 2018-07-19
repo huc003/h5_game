@@ -52,7 +52,21 @@ var GameMain = (function (_super) {
             this.stage.removeEventListener(egret.Event.ENTER_FRAME, this.onStick, this);
             this.onStickDirection();
         }
-        //柱子
+        this.drawLine(0);
+    };
+    GameMain.prototype.drawLine = function (angle) {
+        var ns = new egret.Shape();
+        ns.x = 100;
+        ns.y = 100;
+        ns.graphics.lineStyle(2, 0xFF0000);
+        ns.graphics.moveTo(0, 0);
+        ns.graphics.lineTo(100, 0);
+        ns.alpha = 1 - (angle / 90) * 0.9;
+        ns.rotation = angle;
+        this.addChild(ns);
+        if (angle < 90) {
+            this.drawLine(angle + 15);
+        }
     };
     /**
      * 改变棍子的长度
@@ -66,8 +80,6 @@ var GameMain = (function (_super) {
         b.graphics.drawRect(0, this.stage.height - height, 20, height);
         b.graphics.endFill();
         b.name = 'button';
-        b.x = 0;
-        b.y = this.stage.height - b.width;
         this.addChild(b);
     };
     /**
@@ -89,21 +101,21 @@ var GameMain = (function (_super) {
         // b.anchorOffsetY=800;
         // b.skewX=0;
         // b.skewY=180;
-        b.anchorOffsetX = 0;
-        b.anchorOffsetY = 0;
-        b.x = 0;
-        b.y = 960;
-        console.log(b.anchorOffsetX);
-        console.log(b.anchorOffsetY);
-        console.log(b.x);
-        console.log(b.y);
-        b.touchEnabled = false;
+        // b.anchorOffsetX =0;
+        // b.anchorOffsetY = 0;
+        // b.x = 0;
+        // b.y = 960;
+        // console.log(b.anchorOffsetX);
+        // console.log(b.anchorOffsetY);
+        // console.log(b.x);
+        // console.log(b.y);
+        // b.touchEnabled = false;
         // egret.Tween.get(b,{loop:true}).
         // to({rotation:3},2000,egret.Ease.sineIn);
         //白鹭小鸟不停旋转
-        this.addEventListener(egret.Event.ENTER_FRAME, function (evt) {
-            b.rotation += 3;
-        }, this);
+        // this.addEventListener( egret.Event.ENTER_FRAME, ( evt:egret.Event )=>{
+        //     b.rotation += 3;
+        // }, this ); 
     };
     /**
      * 游戏结束
