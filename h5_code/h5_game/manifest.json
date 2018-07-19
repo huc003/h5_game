@@ -12,6 +12,7 @@
 		"bin-debug/AssetAdapter.js",
 		"bin-debug/Food.js",
 		"bin-debug/GameMain.js",
+		"bin-debug/GamePanel.js",
 		"bin-debug/LoadingUI.js",
 		"bin-debug/Main.js",
 		"bin-debug/Platform.js",
